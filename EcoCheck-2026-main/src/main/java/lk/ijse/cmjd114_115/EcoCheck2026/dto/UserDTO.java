@@ -1,5 +1,8 @@
 package lk.ijse.cmjd114_115.EcoCheck2026.dto;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lk.ijse.cmjd114_115.EcoCheck2026.dto.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;

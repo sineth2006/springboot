@@ -6,6 +6,7 @@ import lk.ijse.cmjd114_115.EcoCheck2026.dto.UserDTO;
 import lk.ijse.cmjd114_115.EcoCheck2026.dto.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,14 @@ public class UserController {
         return new  ResponseEntity<>(HttpStatus.CREATED);
     }
     @GetMapping(value= "{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> getSelectedUser(@PathVariable String userId) {
+    public ResponseEntity<UserDTO> getSelectedUser(@PathVariable String userId)throws ChangeSetPersister.NotFoundException  {
         System.out.println("Selected User: " + userId);
         userService.getselecteduser(userId);
         return new  ResponseEntity<>(userService.getselecteduser(userId), HttpStatus.OK);
     }
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<UserDTO>> getUsers() {
-        userService.getallusers();///github eke meka gahaa thibbe na poddak balanna
+        userService.getallusers();//github eke meka gahaa thibbe na poddak balanna
         return new ResponseEntity<>(userService.getallusers(), HttpStatus.OK);
 
     }

@@ -1,71 +1,65 @@
 package lk.ijse.cmjd114_115.EcoCheck2026.Serive.impl;
 
+import jakarta.transaction.Transactional;
+import lk.ijse.cmjd114_115.EcoCheck2026.Exception.DataNotFoundException;
 import lk.ijse.cmjd114_115.EcoCheck2026.Serive.UserService;
+import lk.ijse.cmjd114_115.EcoCheck2026.Utill.Conversion;
+import lk.ijse.cmjd114_115.EcoCheck2026.Utill.IdGenerate;
+import lk.ijse.cmjd114_115.EcoCheck2026.dao.UserDao;
 import lk.ijse.cmjd114_115.EcoCheck2026.dto.UserDTO;
 import lk.ijse.cmjd114_115.EcoCheck2026.dto.enums.Role;
+import lk.ijse.cmjd114_115.EcoCheck2026.entities.UserEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class UserSeriveIMPL implements UserService {
+    private final UserDao userDao;
+    private final Conversion conversion;
 
     @Override
     public void saveuser(UserDTO user) {
-        System.out.println("Save user"+user.toString());
+    //    -----Generate User Id
+        user.setUseId(IdGenerate.userId());
+//        -----Save the data
+       UserEntity userEntity = conversion.toUserEntity(user);
+      userDao.save(userEntity);
+
     }
 
     @Override
-    public UserDTO getselecteduser(String userid) {
-        return new UserDTO("U002","Kamali","Silva","kamal@mail.com","pw1111", Role.ADMIN);
+    public UserDTO getselecteduser(String userId) {
+        UserEntity userEntity = userDao.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User not found!"));
+        return conversion.toUserDTO(userEntity);
 
     }
 
     @Override
     public List<UserDTO> getallusers() {
-        List<UserDTO> userList = List.of(
-                new UserDTO(
-                        "U001",
-                        "Kamal",
-                        "Silva",
-                        "kamal@mail.com",
-                        "pw1111",
-                        Role.ADMIN
-                ),
-                new UserDTO(
-                        "U002",
-                        "Nimal",
-                        "Perera",
-                        "nimal@mail.com",
-                        "pw2222",
-                        Role.USER
-                ),
-                new UserDTO(
-                        "U003",
-                        "Sahan",
-                        "Silva",
-                        "sahan@mail.com",
-                        "pw1111",
-                        Role.ADMIN
-                ),
-                new UserDTO(
-                        "U004",
-                        "Amali",
-                        "Jayawardena",
-                        "amali@mail.com",
-                        "pw4444",
-                        Role.ADMIN
-                ));
-        return userList;
+        return conversion.toUserDTOList(userDao.findAll());
     }
 
     @Override
     public void updateuser(String userId, UserDTO user) {
-        System.out.println("Updated user id is " + userId +" and the user is: " + user.toString());
+        UserEntity foundUser = userDao.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+        foundUser.setFirstName(user.getFirstName());
+        foundUser.setLastName(user.getLastName());
+        foundUser.setEmail(user.getEmail());
+        foundUser.setPassword(user.getPassword());
+        foundUser.setRole(user.getRole());
+
     }
 
     @Override
     public void deleteuser(String userId) {
-        System.out.println("To be updated the user id " + userId +" as: " + userId.toString());
+        UserEntity foundUser = userDao.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User not found!"));
+        userDao.delete(foundUser);
     }
 
 }

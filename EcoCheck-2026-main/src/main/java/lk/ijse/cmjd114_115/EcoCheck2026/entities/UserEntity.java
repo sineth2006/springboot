@@ -1,0 +1,41 @@
+package lk.ijse.cmjd114_115.EcoCheck2026.entities;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lk.ijse.cmjd114_115.EcoCheck2026.dto.enums.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Entity
+@Builder
+@Table(name="user_table")
+public class UserEntity implements Serializable {
+
+    @Id
+    private String useId;
+    @Column(nullable = false)
+    private String firstName;
+    @Column(nullable = false)
+    private String lastName;
+    @Column(unique = true, nullable = false)
+    private String email;
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserActionEntity> userActions;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<GoalEntity> goals;
+}

@@ -1,17 +1,34 @@
 package lk.ijse.cmjd114_115.EcoCheck2026.Serive.impl;
 
+import jakarta.transaction.Transactional;
 import lk.ijse.cmjd114_115.EcoCheck2026.Serive.ClimateService;
+import lk.ijse.cmjd114_115.EcoCheck2026.Utill.Conversion;
+import lk.ijse.cmjd114_115.EcoCheck2026.Utill.IdGenerate;
+import lk.ijse.cmjd114_115.EcoCheck2026.dao.ClimateActionDao;
+import lk.ijse.cmjd114_115.EcoCheck2026.dao.UserActionDao;
 import lk.ijse.cmjd114_115.EcoCheck2026.dto.ClimateActionDTO;
 import lk.ijse.cmjd114_115.EcoCheck2026.dto.UserDTO;
 import lk.ijse.cmjd114_115.EcoCheck2026.dto.enums.Role;
+import lk.ijse.cmjd114_115.EcoCheck2026.entities.ClimateActionEntity;
+import lk.ijse.cmjd114_115.EcoCheck2026.entities.UserActionEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class ClimateActionIMPL implements ClimateService {
+    private final ClimateActionDao climateactionDao;
+    private final Conversion conversion;
+
     @Override
     public void saveclimate(ClimateActionDTO climate) {
-        System.out.println("Save user"+climate.toString());
+        //    -----Generate User Id
+        climate.setClimateActionId(IdGenerate.climateActionId());
+//        -----Save the data
+        ClimateActionEntity climateActionEntity = conversion.toclimateActionEntity(climate);
+        climateactionDao.save(climateActionEntity);
     }
 
     @Override
